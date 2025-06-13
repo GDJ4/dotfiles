@@ -380,6 +380,9 @@ case $@ in
 "Sketch")
   icon_result=":sketch:"
   ;;
+"Postman")
+  icon_result=":postman"
+  ;;
 "Sequel Ace")
   icon_result=":sequel_ace:"
   ;;

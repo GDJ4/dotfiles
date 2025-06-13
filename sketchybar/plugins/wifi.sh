@@ -1,89 +1,82 @@
 #!/bin/bash
 
-# Скрипт для переключения попапа
-POPUP_CLICK_SCRIPT="sketchybar --set \$NAME popup.drawing=toggle"
+source "$HOME/.config/sketchybar/icons.sh"
+source "$HOME/.config/sketchybar/colors.sh"
 
-# Функция для получения данных о Wi-Fi и трафике
-wifi_status=(
-  update_freq=5
-  icon.font="$FONT:Bold:15.0"
-  icon=
-  icon.color=$WHITE
-  label="Checking..."
-  label.highlight_color=$BLUE
-  popup.align=right
-  script="$PLUGIN_DIR/wifi_status.sh"
-  click_script="$POPUP_CLICK_SCRIPT"
-)
+# Устанавливаем NAME для ручного запуска
+[ -z "$NAME" ] && NAME="wifi"
 
-wifi_template=(
-  drawing=off
-  background.corner_radius=12
-  padding_left=7
-  padding_right=7
-  icon.background.height=2
-  icon.background.y_offset=-12
-)
+# Проверяем статус Wi-Fi через system_profiler
+WIFI_INFO=$(system_profiler SPAirPortDataType)
+WIFI_POWER=$(echo "$WIFI_INFO" | grep -E "Status:.*Connected|Status:.*Off" | cut -d ":" -f2 | xargs)
+RSSI=$(echo "$WIFI_INFO" | grep "Signal / Noise" | grep -oE "-[0-9]+" | head -1 | xargs)
 
-# Скрипт для получения статуса и трафика
-cat << 'EOF' > $PLUGIN_DIR/wifi_status.sh
-#!/bin/bash
+# Файл для хранения предыдущих значений сетевой статистики
+STATS_FILE="$HOME/.config/sketchybar/plugins/wifi_stats.txt"
 
-# Проверка статуса Wi-Fi
-WIFI_STATUS=$(networksetup -getairportnetwork en0 | grep "You are not associated" > /dev/null && echo "Disconnected" || echo "Connected")
-WIFI_ICON=$([[ "$WIFI_STATUS" == "Connected" ]] && echo "" || echo "")
+# Получаем текущую статистику для интерфейса en0
+NETSTAT=$(netstat -ib -I en0 | grep -E "en0.*[0-9]+$")
+CURRENT_RX=$(echo "$NETSTAT" | awk '{print $7}')  # Полученные байты (input bytes)
+CURRENT_TX=$(echo "$NETSTAT" | awk '{print $10}') # Отправленные байты (output bytes)
+CURRENT_TIME=$(date +%s)
 
-# Получение статистики трафика (в байтах)
-NET_STAT=$(netstat -ib -I en0 | grep -A 1 "Name")
-IN_BYTES=$(echo "$NET_STAT" | tail -1 | awk '{print $7}')
-OUT_BYTES=$(echo "$NET_STAT" | tail -1 | awk '{print $10}')
+# Читаем предыдущие значения
+if [ -f "$STATS_FILE" ]; then
+  read PREV_RX PREV_TX PREV_TIME < "$STATS_FILE"
+else
+  PREV_RX=0
+  PREV_TX=0
+  PREV_TIME=$CURRENT_TIME
+fi
 
-# Форматирование чисел
-format_bytes() {
-  local bytes=$1
-  if [ $bytes -gt 1073741824 ]; then
-    echo "$(echo "scale=2; $bytes/1073741824" | bc) GB"
-  elif [ $bytes -gt 1048576 ]; then
-    echo "$(echo "scale=2; $bytes/1048576" | bc) MB"
-  elif [ $bytes -gt 1024 ]; then
-    echo "$(echo "scale=2; $bytes/1024" | bc) KB"
+# Сохраняем текущие значения
+echo "$CURRENT_RX $CURRENT_TX $CURRENT_TIME" > "$STATS_FILE"
+
+# Вычисляем скорость (байты в секунду)
+TIME_DIFF=$((CURRENT_TIME - PREV_TIME))
+if [ $TIME_DIFF -eq 0 ]; then
+  TIME_DIFF=1  # Избегаем деления на ноль
+fi
+RX_SPEED=$(((CURRENT_RX - PREV_RX) / TIME_DIFF))
+TX_SPEED=$(((CURRENT_TX - PREV_TX) / TIME_DIFF))
+
+# Форматируем скорость (всегда 4 символа)
+format_speed() {
+  local speed=$1
+  if [ $speed -ge 1048576 ]; then  # ≥ 1 MB
+    value=$(bc -l <<< "$speed / 1048576" | awk '{printf "%.0f", $0}')
+    [ $value -eq 0 ] && value=1
+    printf "%-3sM" "$value"  # Например, "1 M", "10M"
+  elif [ $speed -ge 1024 ]; then  # ≥ 1 KB
+    value=$(bc -l <<< "$speed / 1024" | awk '{printf "%.1f", $0}')
+    if [ $(echo "$value >= 10" | bc -l) -eq 1 ]; then
+      value=$(printf "%.0f" $value)
+      echo "${value}K "
+    else
+      echo "${value}K"
+    fi
   else
-    echo "$bytes B"
+    value=$(bc -l <<< "$speed / 1024" | awk '{printf "%.1f", $0}')
+    [ $(echo "$value == 0" | bc -l) -eq 1 ] && echo "0.0K" || echo "${value}K"
   fi
 }
 
-IN_FORMATTED=$(format_bytes $IN_BYTES)
-OUT_FORMATTED=$(format_bytes $OUT_BYTES)
+RX_FORMATTED=$(format_speed $RX_SPEED)
+TX_FORMATTED=$(format_speed $TX_SPEED)
 
-# Обновление основного элемента
-sketchybar --set $NAME icon="$WIFI_ICON" label="$WIFI_STATUS"
+# Определяем цвет иконки по уровню сигнала
+if [[ "$WIFI_POWER" == "Connected" ]]; then
+  ICON=$WIFI_ON
+  LABEL="􁾨 $TX_FORMATTED 􁾬 $RX_FORMATTED"
+  if [ -n "$RSSI" ] && [ "$RSSI" -lt -70 ]; then
+    COLOR=$YELLOW  # Нестабильный Wi-Fi (RSSI < -70 dBm)
+  else
+    COLOR=$WHITE
+  fi
+else
+  ICON=$WIFI_OFF
+  LABEL="Off"
+  COLOR=$RED
+fi
 
-# Обновление попапа
-sketchybar --set wifi.in label="↓ $IN_FORMATTED" \
-           --set wifi.out label="↑ $OUT_FORMATTED"
-EOF
-
-# Делаем скрипт исполняемым
-chmod +x $PLUGIN_DIR/wifi_status.sh
-
-# Добавление элементов в sketchybar
-sketchybar --add item wifi.status right                \
-           --set wifi.status "${wifi_status[@]}"       \
-           --subscribe wifi.status mouse.entered       \
-                                  mouse.exited         \
-                                  mouse.exited.global  \
-                                                       \
-           --add item wifi.in popup.wifi.status        \
-           --set wifi.in label="↓ 0 B"                \
-                         padding_left=10              \
-                         padding_right=10             \
-                         background.corner_radius=8   \
-                                                       \
-           --add item wifi.out popup.wifi.status       \
-           --set wifi.out label="↑ 0 B"               \
-                          padding_left=10             \
-                          padding_right=10            \
-                          background.corner_radius=8  \
-                                                       \
-           --add item wifi.template popup.wifi.status  \
-           --set wifi.template "${wifi_template[@]}"
+sketchybar --set "$NAME" icon="$ICON" icon.color="$COLOR" label="$LABEL" label.color="$COLOR"
