@@ -11,6 +11,14 @@ WIFI_INFO=$(system_profiler SPAirPortDataType)
 WIFI_POWER=$(echo "$WIFI_INFO" | grep -E "Status:.*Connected|Status:.*Off" | cut -d ":" -f2 | xargs)
 RSSI=$(echo "$WIFI_INFO" | grep "Signal / Noise" | grep -oE "-[0-9]+" | head -1 | xargs)
 
+# Проверяем статус Amnezia VPN через ifconfig (интерфейс utun22)
+VPN_STATUS=$(ifconfig | grep -E "^utun22:.*UP")
+if [ -n "$VPN_STATUS" ] && [[ "$WIFI_POWER" == "Connected" ]]; then
+  ICON="$WIFI_VPN_ON"  # Иконка Wi-Fi с VPN
+else
+  ICON="$WIFI_ON"      # Обычная иконка Wi-Fi
+fi
+
 # Файл для хранения предыдущих значений сетевой статистики
 STATS_FILE="$HOME/.config/sketchybar/plugins/wifi_stats.txt"
 
@@ -66,7 +74,6 @@ TX_FORMATTED=$(format_speed $TX_SPEED)
 
 # Определяем цвет иконки по уровню сигнала
 if [[ "$WIFI_POWER" == "Connected" ]]; then
-  ICON=$WIFI_ON
   LABEL="􁾨 $TX_FORMATTED 􁾬 $RX_FORMATTED"
   if [ -n "$RSSI" ] && [ "$RSSI" -lt -70 ]; then
     COLOR=$YELLOW  # Нестабильный Wi-Fi (RSSI < -70 dBm)
@@ -74,7 +81,7 @@ if [[ "$WIFI_POWER" == "Connected" ]]; then
     COLOR=$WHITE
   fi
 else
-  ICON=$WIFI_OFF
+  ICON="$WIFI_OFF"  # Иконка для выключенного Wi-Fi
   LABEL="Off"
   COLOR=$RED
 fi
