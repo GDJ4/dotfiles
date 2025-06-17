@@ -8,7 +8,7 @@ wifi=(
   label.align=center                  # Выравнивание текста по центру
   padding_right=5
   padding_left=5
-  update_freq=2
+  update_freq=7
   updates=on
 )
 
