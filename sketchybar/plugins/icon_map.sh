@@ -371,7 +371,7 @@ case $@ in
 "Arc")
   icon_result=":arc:"
   ;;
-"AmneziaVPN")
+"AmneziaVPN"|"v2RayTun")
   icon_result=":nord_vpn:"
   ;;
 "GrandTotal" | "Receipts")
