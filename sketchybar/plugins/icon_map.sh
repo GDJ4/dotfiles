@@ -371,8 +371,14 @@ case $@ in
 "Arc")
   icon_result=":arc:"
   ;;
+"Zen" | "Zen Browser")
+  icon_result=":zen_browser:"
+  ;;
 "AmneziaVPN"|"v2RayTun")
   icon_result=":nord_vpn:"
+  ;;
+"Clash Verge"|"Clash Verge Rev")
+  icon_result=":vpn:"
   ;;
 "GrandTotal" | "Receipts")
   icon_result=":dollar:"
