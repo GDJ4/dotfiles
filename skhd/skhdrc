@@ -4,7 +4,7 @@
 
 :: default : yabai -m config active_window_border_color 0xE0f5c2e7
 # kickstart yabai 
-ralt - y : launchctl kickstart -k "gui/${UID}/homebrew.mxcl.yabai"
+ralt - y : launchctl kickstart -k "gui/${UID}/com.asmvik.yabai"
 # lock screen immediately
 ralt - escape : pmset displaysleepnow 
 # logout
@@ -74,7 +74,7 @@ ralt - 9 : yabai -m space --focus 9
 ralt - c : yabai -m space --create && yabai -m space --focus last
 
 # destroy current space
-ralt + shift - x : yabai -m space --destroy
+ralt + shift - c : yabai -m space --destroy
 
 # === Modification === 
 # Move window relatively
@@ -117,11 +117,6 @@ ralt - i : yabai -m space --toggle padding; \
 	  yabai -m config external_bar all:30:0; \
 	  sketchybar --bar hidden=false;
 
-ralt - i : yabai -m space --toggle padding; \
-	 yabai -m space --toggle gap; \
-	 yabai -m config external_bar all:30:0;\
-	 sketchybar --bar hidden=false;
-
 # Rotate windows clockwise and anticlockwise
 alt - r         : yabai -m space --rotate 270
 shift + alt - r : yabai -m space --rotate 90
@@ -138,9 +133,7 @@ ralt - h : yabai -m window --insert east
 # shift + lctrl + alt - l : yabai -m window --insert east
 
 # Float / Unfloat window
-shift + alt - space : \
-    yabai -m window --toggle float; \
-    yabai -m window --toggle border
+shift + alt - space : yabai -m window --toggle float
 
 # Make window native fullscreen
 alt - f         : yabai -m window --toggle zoom-fullscreen
