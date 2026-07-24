@@ -1,1 +1,26 @@
+# --- Runtime / state files (личные данные, пересоздаются автоматически) ---
+
+# Firebase / update-notifier local state (может содержать OAuth-данные)
 /configstore/firebase-tools.json
+/configstore/update-notifier-firebase-tools.json
+
+# SketchyBar Wi-Fi плагины: кэш, логи, счётчики трафика (SSID, локальный IP, время активности)
+sketchybar/plugins/wifi.log
+sketchybar/plugins/wifi_cache.txt
+sketchybar/plugins/wifi_debug.txt
+sketchybar/plugins/wifi_stats.txt
+
+# Прочие логи и история
+btop/btop.log
+micro/buffers/history
+workspaces_backup.txt
+
+# Симлинк на персональный путь ~/Library/... (утечка имени пользователя)
+iterm2/AppSupport
+
+# yabai scripting-addition state
+mole/
+
+# Общие правила
+*.log
+.DS_Store
