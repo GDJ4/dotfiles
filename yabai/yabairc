@@ -30,7 +30,8 @@ yabai -m config external_bar               all:33:0     \
                 window_opacity_duration    0.1          \
                 active_window_opacity      0.96         \
                 normal_window_opacity      0.90         \
-                window_animation_duration  0.1          \
+                window_animation_duration  0.18         \
+                window_animation_easing    ease_out_cubic \
                 split_ratio                0.50         \
                 auto_balance               off          \
                 mouse_modifier             fn           \

@@ -18,8 +18,8 @@ ralt - escape : pmset displaysleepnow
 
 
 # === launch commands ===
-# open alacritty terminal, blazingly fast compared to iTerm/ralt
-ralt - return : open -na /Applications/Alacritty.app
+# open ghostty terminal
+ralt - return : open -na /Applications/Ghostty.app
 # open firefox
 ralt - b : open -na /Applications/Safari.app
 # open vscode
@@ -89,24 +89,24 @@ ralt + shift - up : yabai -m window --warp north
 ralt + shift - right : yabai -m window --warp east
 
 # send window to space 
-ralt + shift - x : yabai -m window --space recent
-ralt + shift - 1 : yabai -m window --space 1
-ralt + shift - 2 : yabai -m window --space 2
-ralt + shift - 3 : yabai -m window --space 3
-ralt + shift - 4 : yabai -m window --space 4
-ralt + shift - 5 : yabai -m window --space 5
-ralt + shift - 6 : yabai -m window --space 6
-ralt + shift - 7 : yabai -m window --space 7
-ralt + shift - 8 : yabai -m window --space 8
+ralt + shift - x : $HOME/.config/yabai/move_window_to_space.sh recent
+ralt + shift - 1 : $HOME/.config/yabai/move_window_to_space.sh 1
+ralt + shift - 2 : $HOME/.config/yabai/move_window_to_space.sh 2
+ralt + shift - 3 : $HOME/.config/yabai/move_window_to_space.sh 3
+ralt + shift - 4 : $HOME/.config/yabai/move_window_to_space.sh 4
+ralt + shift - 5 : $HOME/.config/yabai/move_window_to_space.sh 5
+ralt + shift - 6 : $HOME/.config/yabai/move_window_to_space.sh 6
+ralt + shift - 7 : $HOME/.config/yabai/move_window_to_space.sh 7
+ralt + shift - 8 : $HOME/.config/yabai/move_window_to_space.sh 8
 
 # Move focus + window to space
-ralt + ctrl - m : yabai -m window --space last; yabai -m space --focus last
-ralt + ctrl - p : yabai -m window --space prev; yabai -m space --focus prev
-ralt + ctrl - n : yabai -m window --space next; yabai -m space --focus next
-ralt + ctrl - 1 : yabai -m window --space 1; yabai -m space --focus 1
-ralt + ctrl - 2 : yabai -m window --space 2; yabai -m space --focus 2
-ralt + ctrl - 3 : yabai -m window --space 3; yabai -m space --focus 3
-ralt + ctrl - 4 : yabai -m window --space 4; yabai -m space --focus 4
+ralt + ctrl - m : $HOME/.config/yabai/move_window_to_space.sh last --focus
+ralt + ctrl - p : $HOME/.config/yabai/move_window_to_space.sh prev --focus
+ralt + ctrl - n : $HOME/.config/yabai/move_window_to_space.sh next --focus
+ralt + ctrl - 1 : $HOME/.config/yabai/move_window_to_space.sh 1 --focus
+ralt + ctrl - 2 : $HOME/.config/yabai/move_window_to_space.sh 2 --focus
+ralt + ctrl - 3 : $HOME/.config/yabai/move_window_to_space.sh 3 --focus
+ralt + ctrl - 4 : $HOME/.config/yabai/move_window_to_space.sh 4 --focus
 
 # Equalize size of windows
 ralt - e : yabai -m space --balance

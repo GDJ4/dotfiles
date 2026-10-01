@@ -1,0 +1,48 @@
+# Migrated from ~/.config/alacritty/alacritty.toml
+
+term = xterm-256color
+
+# Window
+window-padding-x = 10
+window-padding-y = 10
+macos-titlebar-style = hidden
+
+background-opacity = 0.7
+background-blur = true
+window-colorspace = display-p3
+
+# Font
+font-family = "SpaceMono Nerd Font"
+font-size = 14
+font-thicken = true
+
+# Theme: City Lights
+# https://github.com/alacritty/alacritty-theme/blob/4091fddff8da892d5594e94116927c7445620867/themes/citylights.toml
+background = #171d23
+foreground = #ffffff
+
+cursor-color = #008b94
+cursor-text = #fafafa
+
+# Normal colors
+palette = 0=#333f4a
+palette = 1=#d95468
+palette = 2=#8bd49c
+palette = 3=#ebbf83
+palette = 4=#539afc
+palette = 5=#b62d65
+palette = 6=#70e1e8
+palette = 7=#b7c5d3
+
+# Bright colors
+palette = 8=#41505e
+palette = 9=#d95468
+palette = 10=#8bd49c
+palette = 11=#ebbf83
+palette = 12=#5ec4ff
+palette = 13=#e27e8d
+palette = 14=#70e1e8
+palette = 15=#ffffff
+
+# Keybindings
+keybind = shift+enter=text:\x1b\r

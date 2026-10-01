@@ -24,3 +24,58 @@ mole/
 # Общие правила
 *.log
 .DS_Store
+
+# --- Креды и личные идентификаторы (логины, токены, пароли, ключи) ---
+
+# GitHub CLI: oauth-токен и логин
+gh/hosts.yml
+
+# Spotify: client_id приложения (шаблон без него — app.toml.example)
+spotify-player/app.toml
+spotify-player/credentials.json
+ncspot/userstate.cbor
+ncspot/credentials*
+
+# Flutter: client id аналитики
+flutter/tool_state
+
+# Весь configstore (npm/firebase и т.п. хранят там токены)
+/configstore/
+
+# Типовые места хранения кредов в ~/.config
+git/credentials
+gcloud/
+github-copilot/
+op/
+1Password/
+rclone/rclone.conf
+hub
+netlify/
+heroku/
+doctl/
+gh-copilot/
+.netrc
+**/auth.json
+**/*credentials*
+**/*secret*
+**/*token*
+**/*.env
+**/.env*
+
+# Ключи и сертификаты
+*.pem
+*.key
+*.p12
+*.pfx
+*.gpg
+*.asc
+id_rsa*
+id_ed25519*
+
+# Резервные копии (могут содержать старые версии с личными данными)
+*.bak
+*.bak.*
+*~
+
+# .DS_Store во всех подпапках
+**/.DS_Store
